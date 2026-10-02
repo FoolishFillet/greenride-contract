@@ -2,6 +2,7 @@ package org.alo.greenride;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Eine Verleihstation von GreenRide.
@@ -21,8 +22,28 @@ public class Station {
     }
 
     /**
-     * Nimmt ein Fahrrad an dieser Station auf.
-     * Traegt die Beziehung in beiden Objekten ein - nur hier, nirgends sonst.
+     * @param modell    Modelle von Farrädern
+     * @return          gibt die Liste der Fahrräder zurück
+     * */
+    public List<Fahrrad> findeFahrraederNachModell(String modell) {
+        List<Fahrrad> finde = new ArrayList<>();
+        for (Fahrrad f : fahrraeder) {
+            if (f.getModell().equals(modell)) {
+                finde.add(f);
+            }
+        }
+        return finde;
+    }
+
+    /**
+     * Neues Fahrrad wird aufgenommen
+     *
+     * @param fahrrad nimmt neues Fahrrad auf
+     *
+     * @return  Wenn was zurückkommt --> neues Fahrrad
+     *          Wenn Fahrrad vorhanden, dann:
+     *
+     * @throws IllegalArgumentException Wenn Fahrrad bereits vorhanden
      */
     public void fahrradAufnehmen(Fahrrad fahrrad) {
         fahrraeder.add(fahrrad);
@@ -36,14 +57,19 @@ public class Station {
         }
     }
 
-    /** Sucht ein Fahrrad anhand seiner Kennung. */
-    public Fahrrad findeFahrrad(String kennung) {
+    /**
+     * @param kennung ein fahrrad kennung
+     * @return das Fahrrad oder ein null
+     *
+     * @throws IllegalArgumentException wenn kennung NULL oder empty
+     * */
+    public Optional<Fahrrad> findeFahrrad(String kennung) {
         for (Fahrrad f : fahrraeder) {
             if (f.getKennung().equals(kennung)) {
-                return f;
+                return Optional.of(f);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public String getName()    { return name; }

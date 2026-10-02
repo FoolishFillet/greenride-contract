@@ -1,5 +1,7 @@
 package org.alo.greenride;
 
+import java.util.Optional;
+
 /**
  * Nachgestellt: Rueckgaben an der Kasse der Station Warschauer Strasse
  * am Nachmittag des 01.10. Die Mitarbeiterin tippt die Kennung vom
@@ -19,8 +21,14 @@ public class KassenApp {
     }
 
     static void rueckgabeBuchen(Station station, String kennung) {
-        Fahrrad rad = station.findeFahrrad(kennung);
-        System.out.println("Rueckgabe gebucht: " + rad.getKennung()
-                + " (" + rad.getModell() + ")");
+        Optional<Fahrrad> rad = station.findeFahrrad(kennung);
+
+        if (!rad.isEmpty()) {
+            Fahrrad fahrrad = rad.get();
+            System.out.println("Rueckgabe gebucht: " + fahrrad.getKennung() + " (" + fahrrad.getModell() + ")");
+        }
+        else {
+            System.out.println("Kennung " + kennung + " stimmt nicht!");
+        }
     }
 }

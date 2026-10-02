@@ -2,6 +2,7 @@ package org.alo.greenride;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Startet die Stationsuebersicht und fuehrt die Anforderungen
@@ -31,6 +32,10 @@ public class GreenRideApp {
         f3.wartungHinzufuegen("14.09.2026", "Bremse nachgestellt");
         f3.wartungHinzufuegen("28.09.2026", "Kette geoelt");
 
+        ;
+        System.out.println("Warschauer\nCity3: " + warschauer.findeFahrraederNachModell("City 3").size() + "\nE-Bike: " + warschauer.findeFahrraederNachModell("E-Bike").size() + "\n");
+
+
         // --- A2: Wo steht ein bestimmtes Fahrrad? ---------------------
         System.out.println("GR-014 steht an: " + f3.getStation().getName());
         System.out.println("GR-020 steht an: " + f4.getStation().getName());
@@ -47,11 +52,17 @@ public class GreenRideApp {
         System.out.println();
 
         // --- A5: Fahrrad ueber die Kennung finden ---------------------
-        Fahrrad gefunden = warschauer.findeFahrrad("GR-002");
-        System.out.println("Gesucht GR-002, gefunden: " + gefunden.getModell());
+        Optional<Fahrrad> gefunden = warschauer.findeFahrrad("GR-002");
+        if (gefunden.isPresent()) {
+        System.out.println("Gesucht GR-002, gefunden: " + gefunden.get().getModell());
+        }else{
+            return;
+        }
 
-        Fahrrad fehlt = warschauer.findeFahrrad("GR-999");
-        System.out.println("Gesucht GR-999, gefunden: " + fehlt);
+        Optional<Fahrrad> fehlt = warschauer.findeFahrrad("GR-999");
+        if (fehlt.isPresent()) {
+            System.out.println("Gesucht GR-999, gefunden: " + fehlt);
+        }
         System.out.println();
 
         // --- K2: ueber alle Stationen ---------------------------------
@@ -59,19 +70,30 @@ public class GreenRideApp {
         stationen.add(warschauer);
         stationen.add(kottbusser);
 
-        Fahrrad ueberall = sucheUeberall(stationen, "GR-020");
-        System.out.println("sucheUeberall(\"GR-020\") -> "
-                + ueberall.getModell() + " @ " + ueberall.getStation().getName());
+        Optional<Fahrrad> ueberall = sucheUeberall(stationen, "GR-020");
+        if (ueberall.isPresent()) {
+            Fahrrad fahrrad = ueberall.get();
+            System.out.println("sucheUeberall(\"" + fahrrad.getKennung() + "\") -> " + fahrrad.getModell() + " @ " + ueberall.get().getStation().getName());
+        }
     }
 
-    /** Sucht ein Fahrrad an allen uebergebenen Stationen. */
-    static Fahrrad sucheUeberall(List<Station> stationen, String kennung) {
+    /**
+     * Sucht Fahrrad und seine Station
+     *
+     * @param stationen findet Station
+     * @param kennung findet Fahrrad
+     *
+     * @return gibt Fahrrad mit Station und Modell zurück
+     *
+     * @throws IllegalArgumentException Falsche Daten machen falsche Ausgaben
+     */
+    static Optional<Fahrrad> sucheUeberall(List<Station> stationen, String kennung) {
         for (Station s : stationen) {
-            Fahrrad f = s.findeFahrrad(kennung);
-            if (f != null) {
+            Optional<Fahrrad> f = s.findeFahrrad(kennung);
+            if (f.isPresent()) {
                 return f;
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
